@@ -19,6 +19,9 @@ class CPU:
             0b10100010: self.MUL,
             0b10100011: self.DIV,
             0b10101000: self.AND,
+            0b10101010: self.OR,
+            0b10101011: self.XOR,
+            0b01101001: self.NOT,
             0b01100101: self.INC,
             0b01000101: self.PUSH,
             0b01000110: self.POP,
@@ -73,11 +76,25 @@ class CPU:
         self.alu('DIV', reg_a, reg_b)
         # self.pc += 3
         
-    def AND(self):  # handles the AND instruction
+    def AND(self):  # handles the AND instruction (bitwise-AND)
         reg_a = self.ram_read(self.pc + 1)
         reg_b = self.ram_read(self.pc + 2)
         self.alu('AND', reg_a, reg_b)
         # self.pc += 3
+        
+    def OR(self): # handles the OR instruction (bitwise-OR)
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+        self.alu('OR', reg_a, reg_b)
+        
+    def XOR(self): # handles the XOR instruction (bitwise-XOR)
+        reg_a = self.ram_read(self.pc + 1)
+        reg_b = self.ram_read(self.pc + 2)
+        self.alu('XOR', reg_a, reg_b)
+        
+    def NOT(self):  # handles the NOT instruction (bitwise-NOT)
+        reg_a = self.ram_read(self.pc + 1)
+        self.alu('NOT', reg_a=reg_a, reg_b=None)
         
     def INC(self):  # handles the INC instruction
         reg_a = self.ram_read(self.pc + 1)
@@ -207,8 +224,16 @@ class CPU:
             self.reg[reg_a] /= self.reg[reg_b]
             
         elif op == "AND":
-            bitwise_AND = (self.reg[reg_a] & self.reg[reg_b])
-            self.reg[reg_a] = bitwise_AND
+            self.reg[reg_a] &= self.reg[reg_b]
+        
+        elif op == "OR":
+            self.reg[reg_a] |= self.reg[reg_b]
+            
+        elif op == "XOR":
+            self.reg[reg_a] ^= self.reg[reg_b]
+            
+        elif op == "NOT":
+            self.reg[reg_a] = ~(self.reg[reg_a])
             
         elif op == "INC":
             self.reg[reg_a] += 1
